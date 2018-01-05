@@ -24,6 +24,7 @@ a_S = 149597868
 J20 = 1.0826359e-3
 r0 = 6363672.6e-3 # Средний экваториальный? радиус
 
+total = 20
 # Критические аргументы для апсидально-нодальных резонансов
 def critical(sat1, body, type='rad'):
     dW = sat1.W - body.W
@@ -34,18 +35,26 @@ def critical(sat1, body, type='rad'):
 
     out.append(dW + wSat - wBody)
     out.append(dW - wSat + wBody)
-    out.append(dW + wSat + wBody) # 3
-
+    out.append(dW + wSat + wBody)
+    out.append(dW - wSat - wBody)
     out.append(dW + 2*wSat - 2*wBody)
     out.append(dW - 2 * wSat + 2 * wBody)
-    out.append(dW + 2 * wSat + 2 * wBody) # 6
+    out.append(dW + 2 * wSat + 2 * wBody) # 7
 
+    out.append(dW - 2 * wSat - 2 * wBody)
     out.append(dW + wSat)
-    out.append(dW + 2*wSat) # 8
+    out.append(dW - wSat)
+    out.append(dW + 2*wSat)
+    out.append(dW - 2*wSat)
+    out.append(dW + wBody)
+    out.append(dW - wBody) # 14
 
+    out.append(dW + 2*wBody)
+    out.append(dW - 2*wBody)
+    out.append(dW)
     out.append(wSat - wBody)
     out.append(wSat + wBody)
-    out.append(wSat) # 11
+    out.append(wSat) # 20
 
     #  Причёсываем выхлоп:
     for i, r in enumerate(out):
@@ -88,37 +97,62 @@ def resonances(sat, body='sun'):
     out = []
     out.append(dW + wSat - wBody)
     out.append(dW - wSat + wBody)
-    out.append(dW + wSat + wBody)  # 3
-
-    out.append(dW + 2 * wSat - 2 * wBody)
+    out.append(dW + wSat + wBody)
+    out.append(dW - wSat - wBody)
+    out.append(dW + 2*wSat - 2*wBody)
     out.append(dW - 2 * wSat + 2 * wBody)
-    out.append(dW + 2 * wSat + 2 * wBody)  # 6
+    out.append(dW + 2 * wSat + 2 * wBody) # 7
 
+    out.append(dW - 2 * wSat - 2 * wBody)
     out.append(dW + wSat)
-    out.append(dW + 2 * wSat)  # 8
+    out.append(dW - wSat)
+    out.append(dW + 2*wSat)
+    out.append(dW - 2*wSat)
+    out.append(dW + wBody)
+    out.append(dW - wBody) # 14
 
+    out.append(dW + 2*wBody)
+    out.append(dW - 2*wBody)
+    out.append(dW)
     out.append(wSat - wBody)
     out.append(wSat + wBody)
-    out.append(wSat)  # 11
-
+    out.append(wSat) # 20
 
     return out
 
 def resonances_labels(body):
 	out = []
-	out.append('dW + wSat - w%s' % body)
-	out.append('dW - wSat + %s' % body)
-	out.append('dW + wSat + %s' % body)  # 3
+	if body.lower() == 'moon':
+		dW = r"(\Omega- \Omega'_L)"
+		wSat = r'\omega'
+		wBody = r"\omega'_L"
 
-	out.append('dW + 2 * wSat - 2 * %s' % body)
-	out.append('dW - 2 * wSat + 2 * %s' % body)
-	out.append('dW + 2 * wSat + 2 * %s' % body)  # 6
+	elif body.lower() == 'sun':
+		dW = r"(\Omega- \Omega'_S)"
+		wSat = r'\omega'
+		wBody = r"\omega'_S"
 
-	out.append('dW + wSat')
-	out.append('dW + 2 * wSat')  # 8
+	out.append('$%s + %s - %s$' % (dW, wSat, wBody))
+	out.append('$%s - %s + %s$' % (dW, wSat, wBody))
+	out.append('$%s + %s + %s$' % (dW, wSat, wBody))
+	out.append('$%s - %s - %s$' % (dW, wSat, wBody))
+	out.append('$%s + 2%s - 2%s$' % (dW, wSat, wBody))
+	out.append('$%s - 2%s + 2%s$' % (dW, wSat, wBody))
+	out.append('$%s + 2%s + 2%s$' % (dW, wSat, wBody))  # 7
 
-	out.append('wSat - %s' % body)
-	out.append('wSat + %s' % body)
-	out.append('wSat')  # 11
+	out.append('$%s - 2%s - 2%s$' % (dW, wSat, wBody))
+	out.append('$%s + %s$' % (dW, wSat))
+	out.append('$%s - %s$' % (dW, wSat))
+	out.append('$%s + 2%s$' % (dW, wSat))
+	out.append('$%s - 2%s$' % (dW, wSat))
+	out.append('$%s + %s$' % (dW, wBody))
+	out.append('$%s - %s$' % (dW, wBody))  # 14
+
+	out.append('$%s + 2%s$' % (dW, wBody))
+	out.append('$%s - 2%s$' % (dW, wBody))
+	out.append('$%s' % dW)
+	out.append('$%s - %s$' % (wSat, wBody))
+	out.append('$%s + %s$' % (wSat, wBody))
+	out.append('$%s$' % wSat)  # 20
 
 	return out

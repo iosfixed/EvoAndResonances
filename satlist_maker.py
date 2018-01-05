@@ -237,19 +237,26 @@ for infile in files:
 
 		q0, v0 = readeph(q0_str, 'q'), readeph(v0_str, 'v')
 		q0, v0 = q0[1:4], v0[0:3]
-
-		v1_str = Toutput[2 * sat_N + 1]
-		v1 = readeph(v1_str, 'v')
-		if v1 == None:
-			break
-		mMEGNO = v1[3]
-
 		qv = q0 + v0
+
 		sat.set(qv, 'qv')
+		init_a, init_i = round(sat.a), round(sat.i/rad)
+
+		q1_str = Toutput[2 * sat_N]
+		v1_str = Toutput[2 * sat_N + 1]
+
+		q1, v1 = readeph(q1_str, 'q'), readeph(v1_str, 'v')
+		if v1 == None or q1 == None:
+			break
+		qv1 = q1[1:4] + v1[0:3]
+
+		sat.set(qv1, 'qv')
+		e, mMEGNO = sat.e, v1[3]
 		satlist = satlist.append({'file': infile,
 		                'sat_N': sat_N,
-		                'a': round(sat.a),
-		                'i': round(sat.i/rad),
+		                'a': init_a,
+		                'i': init_i,
+		                'e': e,
 		                'mMEGNO': mMEGNO}, ignore_index=True)
 
 satlist.to_csv('../satlist.csv')
